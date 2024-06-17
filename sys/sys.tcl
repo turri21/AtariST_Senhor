@@ -42,9 +42,9 @@ set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 7
 #set_location_assignment PIN_AH12 -to USER_IO[2]
 #set_location_assignment PIN_AH9 -to USER_IO[1]
 #set_location_assignment PIN_AG11 -to USER_IO[0]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to USER_IO[*]
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to USER_IO[*]
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MAXIMUM CURRENT" -to USER_IO[*]
+#set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to USER_IO[*]
+#set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to USER_IO[*]
+#set_instance_assignment -name CURRENT_STRENGTH_NEW "MAXIMUM CURRENT" -to USER_IO[*]
 
 #============================================================
 # SDIO_CD or SPDIF_OUT
