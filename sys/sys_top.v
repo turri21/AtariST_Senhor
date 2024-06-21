@@ -195,8 +195,7 @@ mcp23009 mcp23009
 wire io_dig = mcp_en ? mcp_mode : SW[3];
 
 `ifndef MISTER_DUAL_SDRAM
-	//wire   av_dis    = io_dig | VGA_EN;
-	wire   av_dis    = io_dig;
+	wire   av_dis    = io_dig | VGA_EN;
 	assign LED_POWER = av_dis ? 1'bZ : mcp_en ? de1          : led_p ? 1'bZ : 1'b0;
 	assign LED_HDD   = av_dis ? 1'bZ : mcp_en ? (sog & ~cs1) : led_d ? 1'bZ : 1'b0;
 	assign LED_USER  = av_dis ? 1'bZ : mcp_en ? ~vga_tx_clk  : led_u ? 1'bZ : 1'b0;
