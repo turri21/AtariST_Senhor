@@ -68,49 +68,48 @@ module sys_top
 	output        SDRAM2_CLK,
 
 `else
-   //Senhor: If you disable the following VGA signals there will be bright lines at the edges of the shapes.
 	//////////// VGA ///////////
-	output  [5:0] VGA_R,
-	output  [5:0] VGA_G,
-	output  [5:0] VGA_B,
-	inout         VGA_HS,
-	output		  VGA_VS,
-	input         VGA_EN,  // active low
+	//output  [5:0] VGA_R,
+	//output  [5:0] VGA_G,
+	//output  [5:0] VGA_B,
+	//inout         VGA_HS,
+	//output		  VGA_VS,
+	//input         VGA_EN,  // active low
 
 	/////////// AUDIO //////////
-//	output		  AUDIO_L,
-//	output		  AUDIO_R,
-//	output		  AUDIO_SPDIF,
+	//output		  AUDIO_L,
+	//output		  AUDIO_R,
+	//output		  AUDIO_SPDIF,
 
 	//////////// SDIO ///////////
-//	inout   [3:0] SDIO_DAT,
-//	inout         SDIO_CMD,
-//	output        SDIO_CLK,
+	//inout   [3:0] SDIO_DAT,
+	//inout         SDIO_CMD,
+	//output        SDIO_CLK,
 
 	//////////// I/O ///////////
-	output        LED_USER,
-//	output        LED_HDD,
-//	output        LED_POWER,
-//	input         BTN_USER,
-//	input         BTN_OSD,
-//	input         BTN_RESET,
+	//output        LED_USER,
+	//output        LED_HDD,
+	//output        LED_POWER,
+	//input         BTN_USER,
+	//input         BTN_OSD,
+	//input         BTN_RESET,
 `endif
 
 	////////// I/O ALT /////////
-//	output        SD_SPI_CS,
-//	input         SD_SPI_MISO,
-//	output        SD_SPI_CLK,
-//	output        SD_SPI_MOSI,
+	//output        SD_SPI_CS,
+	//input         SD_SPI_MISO,
+	//output        SD_SPI_CLK,
+	//output        SD_SPI_MOSI,
 
-//	inout         SDCD_SPDIF,
-//	output        IO_SCL,
-//	inout         IO_SDA,
+	//inout         SDCD_SPDIF,
+	//output        IO_SCL,
+	//inout         IO_SDA,
 
 	////////// ADC //////////////
-//	output        ADC_SCK,
-//	input         ADC_SDO,
-//	output        ADC_SDI,
-//	output        ADC_CONVST,
+	//output        ADC_SCK,
+	//input         ADC_SDO,
+	//output        ADC_SDI,
+	//output        ADC_CONVST,
 
 	////////// MB KEY ///////////
 	input   [1:0] KEY,
@@ -122,35 +121,44 @@ module sys_top
 	output  [7:0] LED
 
 	///////// USER IO ///////////
-//	inout   [6:0] USER_IO
+	//inout   [6:0] USER_IO
 );
+
+///////////////////////// Senhor: Initializations ////////////////////////
+
+(* keep = 1 *) wire [5:0] VGA_R;
+(* keep = 1 *) wire [5:0] VGA_G;
+(* keep = 1 *) wire [5:0] VGA_B;
+(* keep = 1 *) wire VGA_HS;
+(* keep = 1 *) wire VGA_VS;
+wire VGA_EN = 1'b1;
+
+wire [3:0] SDIO_DAT;
+wire SDIO_CMD = 1'b1;
+wire [6:0] USER_IO;
+wire SD_SPI_MISO = 1'b1;
+
+wire BTN_RESET = 1'b1, BTN_OSD = 1'b1, BTN_USER = 1'b1;
+
+/////////////////////////////////////////////////////////////////////////
 
 //////////////////////  Secondary SD  ///////////////////////////////////
 
-//Senhor: Initialize these to fix interference issues in video & audio.
-//There's no need to disable #set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
-//in .qsf any more.
-wire SD_CS=1'bZ;
-wire SD_CLK=1'bZ;
-wire SD_MOSI=1'bZ;
-wire SD_MISO=1'bZ;
-wire SD_CD=1'bZ;
-/////////////////////////////////////////////////////////////////////////
-
+wire SD_CS, SD_CLK, SD_MOSI, SD_MISO, SD_CD;
 
 `ifndef MISTER_DUAL_SDRAM
-//	assign SD_CD       = mcp_en ? mcp_sdcd : SDCD_SPDIF;
-//	assign SD_MISO     = SD_CD | (mcp_en ? SD_SPI_MISO : (VGA_EN | SDIO_DAT[0]));
-//	assign SD_SPI_CS   = mcp_en ?  (mcp_sdcd  ? 1'bZ : SD_CS) : (sog & ~cs1 & ~VGA_EN) ? 1'b1 : 1'bZ;
-//	assign SD_SPI_CLK  = (~mcp_en | mcp_sdcd) ? 1'bZ : SD_CLK;
-//	assign SD_SPI_MOSI = (~mcp_en | mcp_sdcd) ? 1'bZ : SD_MOSI;
-//	assign {SDIO_CLK,SDIO_CMD,SDIO_DAT} = av_dis ? 6'bZZZZZZ : (mcp_en | (SDCD_SPDIF & ~SW[2])) ? {vga_g,vga_r,vga_b} : {SD_CLK,SD_MOSI,SD_CS,3'bZZZ};
-//`else
-//	assign SD_CD       = mcp_sdcd;
-//	assign SD_MISO     = mcp_sdcd | SD_SPI_MISO;
-//	assign SD_SPI_CS   = mcp_sdcd ? 1'bZ : SD_CS;
-//	assign SD_SPI_CLK  = mcp_sdcd ? 1'bZ : SD_CLK;
-//	assign SD_SPI_MOSI = mcp_sdcd ? 1'bZ : SD_MOSI;
+	assign SD_CD       = mcp_en ? mcp_sdcd : SDCD_SPDIF;
+	assign SD_MISO     = SD_CD | (mcp_en ? SD_SPI_MISO : (VGA_EN | SDIO_DAT[0]));
+	assign SD_SPI_CS   = mcp_en ?  (mcp_sdcd  ? 1'bZ : SD_CS) : (sog & ~cs1 & ~VGA_EN) ? 1'b1 : 1'bZ;
+	assign SD_SPI_CLK  = (~mcp_en | mcp_sdcd) ? 1'bZ : SD_CLK;
+	assign SD_SPI_MOSI = (~mcp_en | mcp_sdcd) ? 1'bZ : SD_MOSI;
+	assign {SDIO_CLK,SDIO_CMD,SDIO_DAT} = av_dis ? 6'bZZZZZZ : (mcp_en | (SDCD_SPDIF & ~SW[2])) ? {vga_g,vga_r,vga_b} : {SD_CLK,SD_MOSI,SD_CS,3'bZZZ};
+`else
+	assign SD_CD       = mcp_sdcd;
+	assign SD_MISO     = mcp_sdcd | SD_SPI_MISO;
+	assign SD_SPI_CS   = mcp_sdcd ? 1'bZ : SD_CS;
+	assign SD_SPI_CLK  = mcp_sdcd ? 1'bZ : SD_CLK;
+	assign SD_SPI_MOSI = mcp_sdcd ? 1'bZ : SD_MOSI;
 `endif
 
 //////////////////////  LEDs/Buttons  ///////////////////////////////////
@@ -191,9 +199,9 @@ wire io_dig = mcp_en ? mcp_mode : SW[3];
 	wire   av_dis    = io_dig;
 	assign LED_POWER = av_dis ? 1'bZ : mcp_en ? de1          : led_p ? 1'bZ : 1'b0;
 	assign LED_HDD   = av_dis ? 1'bZ : mcp_en ? (sog & ~cs1) : led_d ? 1'bZ : 1'b0;
-	//assign LED_USER  = av_dis ? 1'bZ : mcp_en ? ~vga_tx_clk  : led_u ? 1'bZ : 1'b0;
-//	assign LED_USER  = VGA_TX_CLK;
-//	wire   BTN_DIS   = VGA_EN;
+	assign LED_USER  = av_dis ? 1'bZ : mcp_en ? ~vga_tx_clk  : led_u ? 1'bZ : 1'b0;
+	assign LED_USER  = VGA_TX_CLK;
+	wire   BTN_DIS   = VGA_EN;
 `else
 	wire   BTN_RESET = SDRAM2_DQ[9];
 	wire   BTN_OSD   = SDRAM2_DQ[13];
@@ -208,15 +216,15 @@ always @(posedge FPGA_CLK2_50) begin
 	reg btn_up = 0;
 	reg btn_en = 0;
 
-//	btn_up <= BTN_RESET & BTN_OSD & BTN_USER;
+	btn_up <= BTN_RESET & BTN_OSD & BTN_USER;
 	if(~reset & btn_up & ~&btn_timeout) btn_timeout <= btn_timeout + 1'd1;
-//	btn_en <= ~BTN_DIS;
+	btn_en <= ~BTN_DIS;
 	BTN_EN <= &btn_timeout & btn_en;
 end
 
-//wire btn_r = (mcp_en | SW[3]) ? mcp_btn[1] : (BTN_EN & ~BTN_RESET);
-//wire btn_o = (mcp_en | SW[3]) ? mcp_btn[2] : (BTN_EN & ~BTN_OSD  );
-//wire btn_u = (mcp_en | SW[3]) ? mcp_btn[0] : (BTN_EN & ~BTN_USER );
+wire btn_r = (mcp_en | SW[3]) ? mcp_btn[1] : (BTN_EN & ~BTN_RESET);
+wire btn_o = (mcp_en | SW[3]) ? mcp_btn[2] : (BTN_EN & ~BTN_OSD  );
+wire btn_u = (mcp_en | SW[3]) ? mcp_btn[0] : (BTN_EN & ~BTN_USER );
 
 reg btn_user, btn_osd;
 always @(posedge FPGA_CLK2_50) begin
@@ -228,11 +236,11 @@ always @(posedge FPGA_CLK2_50) begin
 	if(div > 100000) div <= 0;
 
 	if(!div) begin
-//		deb_user <= {deb_user[6:0], btn_u | ~KEY[1]};
+		deb_user <= {deb_user[6:0], btn_u | ~KEY[0]};  //MiSTer: ~KEY[1] Senhor: Buttons are switched for convenience.
 		if(&deb_user) btn_user <= 1;
 		if(!deb_user) btn_user <= 0;
 
-//		deb_osd <= {deb_osd[6:0], btn_o | ~KEY[0]};
+		deb_osd <= {deb_osd[6:0], btn_o | ~KEY[1]}; //MiSTer: ~KEY[0] Senhor: Buttons are switched for convenience.
 		if(&deb_osd) btn_osd <= 1;
 		if(!deb_osd) btn_osd <= 0;
 	end
