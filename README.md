@@ -1,3 +1,8 @@
+-=(AtariST_Senhor notes)=-
+
+Tested: Working Video 720p, 1080p & Sound.
+
+___
 # Atari ST/STe for MiSTer (port of MiSTery)
 
 Thanks to Gyorgy Szombathelyi for MiSTery core
